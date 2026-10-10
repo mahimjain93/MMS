@@ -9,7 +9,7 @@ Every feature must make that faster or more likely. If it doesn't, it waits.
 Me. One user, one browser. No auth, no sync, no onboarding.
 
 ## The loop (the whole of v1)
-1. **Check in** — one tap: Battery `Full / Half / Low`. Once per day; skipped if already done today.
+1. **Check in** — one tap: Battery `Full / Half / Low`, plus an optional mood (Calm · Okay · Anxious · Flat · Restless). Once per day; tap the battery in the header to change either. Mood is recorded (shown in the journal), it does not change which task appears.
 2. **Doorway** — the app shows **one** task, not a list. Buttons: `Start`, `Not this one` (shows next), `This feels too big`.
 3. **Work cycle** — 25-min timer on the chosen task. `⚡ JUST START` starts a cycle with no task picked.
 4. **How was that?** — neutral prompt after the cycle: tick done / not done, optional one-line note.
@@ -40,9 +40,9 @@ Streaks pause, never break · JUST START bypasses any required input · "How was
 ## Data model (localStorage, key `mms-state`)
 ```ts
 type State = {
-  schemaVersion: 1;
+  schemaVersion: 2;
   tasks:   { id: string; title: string; parentId?: string; createdAt: string; doneAt?: string }[];
-  days:    { date: string; battery: 'full' | 'half' | 'low' }[];
+  days:    { date: string; battery: 'full' | 'half' | 'low'; mood?: 'calm' | 'okay' | 'anxious' | 'flat' | 'restless' }[];
   cycles:  { id: string; date: string; startedAt: string; endedAt?: string; taskId?: string }[];
   journal: { id: string; date: string; type: 'cycle' | 'note'; text: string; cycleId?: string }[];
   opens:   { at: string; actedAt?: string }[];   // the 2-week metric

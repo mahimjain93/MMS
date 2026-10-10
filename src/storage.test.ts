@@ -16,6 +16,12 @@ describe('migrate / parse', () => {
     expect(migrate('hello')).toEqual(defaultState());
   });
 
+  it('upgrades v1 data to v2 without losing anything', () => {
+    const s = migrate({ schemaVersion: 1, days: [{ date: '2026-10-10', battery: 'low' }] });
+    expect(s.schemaVersion).toBe(2);
+    expect(s.days).toEqual([{ date: '2026-10-10', battery: 'low' }]);
+  });
+
   it('keeps valid v1 data and repairs missing arrays', () => {
     const s = migrate({ schemaVersion: 1, tasks: [{ id: 'a', title: 'A', createdAt: 'x' }] });
     expect(s.tasks).toHaveLength(1);

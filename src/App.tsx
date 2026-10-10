@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
 import { useAppState } from './useAppState';
-import { addTask, batteryFor, checkIn } from './logic/state';
+import { addTask, checkIn, dayFor } from './logic/state';
 import { candidates, pickDoorway, skipNext } from './logic/pickDoorway';
 import { activeCycle, addNote, CYCLE_MS, finishCycle, remainingMs, splitTask, startCycle } from './logic/cycles';
 import { deleteTask, markDone, renameTask } from './logic/tasks';
@@ -15,6 +15,17 @@ import { Journal } from './components/Journal';
 import { TaskList } from './components/TaskList';
 import { useTheme } from './theme';
 
+function BatteryIcon({ level }: { level: 'full' | 'half' | 'low' }) {
+  const w = level === 'full' ? 12 : level === 'half' ? 7 : 3;
+  return (
+    <svg width="20" height="11" viewBox="0 0 20 11" aria-hidden="true" className="shrink-0">
+      <rect x="0.5" y="0.5" width="16" height="10" rx="2" fill="none" stroke="currentColor" />
+      <rect x="17.5" y="3.5" width="2" height="4" rx="0.5" fill="currentColor" />
+      <rect x="2.5" y="2.5" width={w} height="6" rx="1" fill="currentColor" />
+    </svg>
+  );
+}
+
 export default function App() {
   const [state, setState] = useAppState();
   const [theme, nextTheme] = useTheme();
@@ -22,10 +33,12 @@ export default function App() {
   const [adding, setAdding] = useState(false);
   const [splittingId, setSplittingId] = useState<string | null>(null);
   const [panel, setPanel] = useState<'journal' | 'tasks' | null>(null);
+  const [editingCheckIn, setEditingCheckIn] = useState(false);
   // A running cycle is "ending" once its time is up or "End early" is pressed.
   const [endingId, setEndingId] = useState<string | null>(null);
 
-  const battery = batteryFor(state);
+  const today = dayFor(state);
+  const battery = today?.battery;
   const cycle = activeCycle(state);
   const cycleTask = cycle?.taskId ? state.tasks.find((t) => t.id === cycle.taskId) : undefined;
   const ending = !!cycle && (endingId === cycle.id || remainingMs(cycle) === 0);
@@ -66,6 +79,18 @@ export default function App() {
         onClose={() => setPanel(null)}
       />
     );
+  } else if (editingCheckIn && today) {
+    main = (
+      <CheckIn
+        current={today}
+        onPick={(b, mood) => {
+          setState((s) => checkIn(s, b, mood));
+          setEditingCheckIn(false);
+          setSkipIds([]);
+        }}
+        onCancel={() => setEditingCheckIn(false)}
+      />
+    );
   } else if (cycle && ending) {
     main = (
       <HowWasThat
@@ -80,7 +105,7 @@ export default function App() {
   } else if (cycle) {
     main = <Timer cycle={cycle} title={cycleTask?.title} onEnd={endCycle} />;
   } else if (!battery) {
-    main = <CheckIn onPick={(b) => setState((s) => checkIn(s, b))} />;
+    main = <CheckIn onPick={(b, mood) => setState((s) => checkIn(s, b, mood))} />;
   } else if (splitting) {
     main = (
       <Split
@@ -118,15 +143,36 @@ export default function App() {
       <header className="flex h-8 items-center justify-between gap-3 text-sm text-stone-500">
         <span className="font-semibold tracking-wider text-stone-400">MMS</span>
         <div className="flex items-center gap-3 sm:gap-4">
-          {battery && <span>Battery · {battery}</span>}
+          {today && (
+            <button
+              onClick={() => {
+                setPanel(null);
+                setEditingCheckIn((v) => !v);
+              }}
+              aria-label={`Battery ${today.battery}${today.mood ? `, mood ${today.mood}` : ''}. Tap to change.`}
+              className={`flex items-center gap-1.5 ${editingCheckIn ? 'text-amber-200' : 'text-stone-400 hover:text-stone-200'}`}
+            >
+              <BatteryIcon level={today.battery} />
+              <span>
+                {today.battery}
+                {today.mood && <span className="text-stone-500"> · {today.mood}</span>}
+              </span>
+            </button>
+          )}
           <button
-            onClick={() => setPanel(panel === 'tasks' ? null : 'tasks')}
+            onClick={() => {
+              setEditingCheckIn(false);
+              setPanel(panel === 'tasks' ? null : 'tasks');
+            }}
             className={panel === 'tasks' ? 'text-amber-200' : 'text-stone-400 hover:text-stone-200'}
           >
             Tasks{waiting > 0 && ` · ${waiting}`}
           </button>
           <button
-            onClick={() => setPanel(panel === 'journal' ? null : 'journal')}
+            onClick={() => {
+              setEditingCheckIn(false);
+              setPanel(panel === 'journal' ? null : 'journal');
+            }}
             className={panel === 'journal' ? 'text-amber-200' : 'text-stone-400 hover:text-stone-200'}
           >
             Journal

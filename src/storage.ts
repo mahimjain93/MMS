@@ -1,13 +1,14 @@
 export type Battery = 'full' | 'half' | 'low';
 
 export type Task = { id: string; title: string; parentId?: string; createdAt: string; doneAt?: string };
-export type Day = { date: string; battery: Battery };
+export type Mood = 'calm' | 'okay' | 'anxious' | 'flat' | 'restless';
+export type Day = { date: string; battery: Battery; mood?: Mood };
 export type Cycle = { id: string; date: string; startedAt: string; endedAt?: string; taskId?: string };
 export type JournalEntry = { id: string; date: string; type: 'cycle' | 'note'; text: string; cycleId?: string };
 export type Open = { at: string; actedAt?: string };
 
 export type State = {
-  schemaVersion: 1;
+  schemaVersion: 2;
   tasks: Task[];
   days: Day[];
   cycles: Cycle[];
@@ -16,10 +17,10 @@ export type State = {
 };
 
 export const STORAGE_KEY = 'mms-state';
-export const CURRENT_VERSION = 1;
+export const CURRENT_VERSION = 2;
 
 export function defaultState(): State {
-  return { schemaVersion: 1, tasks: [], days: [], cycles: [], journal: [], opens: [] };
+  return { schemaVersion: 2, tasks: [], days: [], cycles: [], journal: [], opens: [] };
 }
 
 /** Local date as YYYY-MM-DD (not UTC, so late-night IST stays on the right day). */
@@ -47,9 +48,10 @@ export function migrate(raw: unknown): State {
   if (!raw || typeof raw !== 'object') return defaultState();
   const r = raw as Record<string, unknown>;
 
-  if (r.schemaVersion === 1) {
+  // v1 -> v2: days gained an optional mood. Nothing to convert.
+  if (r.schemaVersion === 1 || r.schemaVersion === 2) {
     return {
-      schemaVersion: 1,
+      schemaVersion: 2,
       tasks: arr<Task>(r.tasks),
       days: arr<Day>(r.days),
       cycles: arr<Cycle>(r.cycles),

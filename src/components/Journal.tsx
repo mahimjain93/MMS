@@ -10,6 +10,7 @@ export function Journal({ state, onNote, onClose }: Props) {
   const [text, setText] = useState('');
   const cycles = new Map(state.cycles.map((c) => [c.id, c]));
   const tasks = new Map(state.tasks.map((t) => [t.id, t]));
+  const days = new Map(state.days.map((d) => [d.date, d]));
 
   const byDate = new Map<string, typeof state.journal>();
   [...state.journal].reverse().forEach((e) => byDate.set(e.date, [...(byDate.get(e.date) ?? []), e]));
@@ -47,7 +48,15 @@ export function Journal({ state, onNote, onClose }: Props) {
 
       {[...byDate].map(([date, entries]) => (
         <section key={date} className="flex flex-col gap-3">
-          <h2 className="text-sm uppercase tracking-widest text-stone-500">{date}</h2>
+          <h2 className="text-sm uppercase tracking-widest text-stone-500">
+            {date}
+            {days.get(date) && (
+              <span className="normal-case tracking-normal">
+                {' '}· battery {days.get(date)!.battery}
+                {days.get(date)!.mood && ` · ${days.get(date)!.mood}`}
+              </span>
+            )}
+          </h2>
           {entries.map((e) => {
             const cycle = e.cycleId ? cycles.get(e.cycleId) : undefined;
             const task = cycle?.taskId ? tasks.get(cycle.taskId) : undefined;

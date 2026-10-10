@@ -1,4 +1,4 @@
-import { newId, todayStr, type Battery, type State } from '../storage';
+import { newId, todayStr, type Battery, type Day, type Mood, type State } from '../storage';
 
 /** Record that the app was opened. Called once per load. */
 export function recordOpen(state: State, now = new Date()): State {
@@ -17,9 +17,15 @@ export function batteryFor(state: State, date = todayStr()): Battery | undefined
   return state.days.find((d) => d.date === date)?.battery;
 }
 
-export function checkIn(state: State, battery: Battery, date = todayStr()): State {
+export function dayFor(state: State, date = todayStr()): Day | undefined {
+  return state.days.find((d) => d.date === date);
+}
+
+/** Record (or change) today's battery and optional mood. */
+export function checkIn(state: State, battery: Battery, mood?: Mood, date = todayStr()): State {
   const days = state.days.filter((d) => d.date !== date);
-  return { ...state, days: [...days, { date, battery }] };
+  const day: Day = mood ? { date, battery, mood } : { date, battery };
+  return { ...state, days: [...days, day] };
 }
 
 export function addTask(state: State, title: string, now = new Date()): State {

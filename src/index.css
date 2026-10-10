@@ -1,5 +1,68 @@
 @import "tailwindcss";
 
+/*
+ * Themes. The screens are written with dark-mode colours (stone, amber, ...).
+ * Light mode flips each scale end-for-end (stone-900 <-> stone-100, amber-300
+ * <-> amber-700 ...), so every screen gets a matching light version without
+ * per-component changes. Values are set here so both themes are exact.
+ */
+@theme {
+  --color-stone-50: #fafaf9;
+  --color-stone-100: #f5f5f4;
+  --color-stone-200: #e7e5e4;
+  --color-stone-300: #d6d3d1;
+  --color-stone-400: #a8a29e;
+  --color-stone-500: #78716c;
+  --color-stone-600: #57534e;
+  --color-stone-700: #44403c;
+  --color-stone-800: #292524;
+  --color-stone-900: #1c1917;
+  --color-stone-950: #0c0a09;
+
+  --color-amber-200: #fde68a;
+  --color-amber-300: #fcd34d;
+  --color-amber-700: #b45309;
+  --color-amber-800: #92400e;
+
+  --color-emerald-300: #6ee7b7;
+  --color-emerald-700: #047857;
+
+  --color-red-300: #fca5a5;
+  --color-red-500: #ef4444;
+  --color-red-700: #b91c1c;
+}
+
+:root {
+  --page-bg: #0f1115;
+  --page-fg: #e7e5e0;
+  color-scheme: dark;
+}
+
+:root[data-theme="light"] {
+  --page-bg: #faf8f4;
+  --page-fg: #1c1917;
+  color-scheme: light;
+
+  --color-stone-50: #0c0a09;
+  --color-stone-100: #1c1917;
+  --color-stone-200: #292524;
+  --color-stone-300: #44403c;
+  --color-stone-400: #57534e;
+  --color-stone-500: #78716c;
+  --color-stone-600: #a8a29e;
+  --color-stone-700: #d6d3d1;
+  --color-stone-800: #e7e5e4;
+  --color-stone-900: #f5f5f4;
+  --color-stone-950: #fafaf9;
+
+  --color-amber-200: #92400e;
+  --color-amber-300: #b45309;
+
+  --color-emerald-300: #047857;
+
+  --color-red-300: #b91c1c;
+}
+
 html,
 body,
 #root {
@@ -7,8 +70,9 @@ body,
 }
 
 body {
-  background: #0f1115;
-  color: #e7e5e0;
+  background: var(--page-bg);
+  color: var(--page-fg);
   font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
   -webkit-font-smoothing: antialiased;
+  transition: background-color 0.2s, color 0.2s;
 }

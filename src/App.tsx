@@ -13,9 +13,11 @@ import { HowWasThat } from './components/HowWasThat';
 import { Split } from './components/Split';
 import { Journal } from './components/Journal';
 import { TaskList } from './components/TaskList';
+import { useTheme } from './theme';
 
 export default function App() {
   const [state, setState] = useAppState();
+  const [theme, nextTheme] = useTheme();
   const [skipIds, setSkipIds] = useState<string[]>([]);
   const [adding, setAdding] = useState(false);
   const [splittingId, setSplittingId] = useState<string | null>(null);
@@ -113,9 +115,9 @@ export default function App() {
 
   return (
     <div className="mx-auto flex min-h-full max-w-2xl flex-col px-4 py-6">
-      <header className="flex h-8 items-center justify-between text-sm text-stone-500">
+      <header className="flex h-8 items-center justify-between gap-3 text-sm text-stone-500">
         <span className="font-semibold tracking-wider text-stone-400">MMS</span>
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-3 sm:gap-4">
           {battery && <span>Battery · {battery}</span>}
           <button
             onClick={() => setPanel(panel === 'tasks' ? null : 'tasks')}
@@ -128,6 +130,14 @@ export default function App() {
             className={panel === 'journal' ? 'text-amber-200' : 'text-stone-400 hover:text-stone-200'}
           >
             Journal
+          </button>
+          <button
+            onClick={nextTheme}
+            aria-label={`Theme: ${theme}. Tap to change.`}
+            title={`Theme: ${theme}`}
+            className="w-6 text-base text-stone-400 hover:text-stone-200"
+          >
+            {theme === 'light' ? '☀' : theme === 'dark' ? '☾' : '◐'}
           </button>
         </div>
       </header>

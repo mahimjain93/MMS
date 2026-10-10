@@ -86,3 +86,25 @@ export function save(state: State): void {
     // Storage full or blocked — the app keeps working in memory.
   }
 }
+
+/* ---- Device preferences (kept apart from State: they belong to this browser, not your data) ---- */
+
+export type ThemePref = 'light' | 'dark' | 'auto';
+export const THEME_KEY = 'mms-theme';
+
+export function loadTheme(): ThemePref {
+  try {
+    const v = localStorage.getItem(THEME_KEY);
+    return v === 'dark' || v === 'auto' || v === 'light' ? v : 'light';
+  } catch {
+    return 'light';
+  }
+}
+
+export function saveTheme(pref: ThemePref): void {
+  try {
+    localStorage.setItem(THEME_KEY, pref);
+  } catch {
+    // ignore
+  }
+}

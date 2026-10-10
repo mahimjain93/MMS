@@ -19,7 +19,7 @@ Adding a task is always one tap away from any state, so an empty list never dead
 
 **All tasks** (header → Tasks): the queue, oldest first, with split steps nested. Rename, mark done, delete. It's for housekeeping — the main screen still shows one task.
 
-**Chime** when a cycle's time is up (in-app sound only, scheduled on the audio clock so it rings in a background tab).
+**Sound**: a soft tick on Start; a chime when a cycle ends — on time (scheduled on the audio clock so it rings in a background tab) or early. In-app sound only.
 
 ## "This feels too big"
 Splits a task into 2–3 smaller first steps that replace it in the doorway.

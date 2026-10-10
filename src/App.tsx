@@ -4,7 +4,7 @@ import { addTask, batteryFor, checkIn } from './logic/state';
 import { candidates, pickDoorway, skipNext } from './logic/pickDoorway';
 import { activeCycle, addNote, CYCLE_MS, finishCycle, remainingMs, splitTask, startCycle } from './logic/cycles';
 import { deleteTask, markDone, renameTask } from './logic/tasks';
-import { scheduleChime, unlockAudio } from './sound';
+import { playChime, playStartTick, scheduleChime, unlockAudio } from './sound';
 import { CheckIn } from './components/CheckIn';
 import { Doorway } from './components/Doorway';
 import { AddTask } from './components/AddTask';
@@ -30,7 +30,12 @@ export default function App() {
   const doorway = battery ? pickDoorway(state.tasks, battery, skipIds) : null;
   const splitting = splittingId ? state.tasks.find((t) => t.id === splittingId) : undefined;
   const canSkip = candidates(state.tasks).length > 1;
-  const endCycle = useCallback(() => cycle && setEndingId(cycle.id), [cycle]);
+  const endCycle = useCallback(() => {
+    if (!cycle) return;
+    // Time up: the scheduled chime rings. Ended early: chime now instead.
+    if (remainingMs(cycle) > 1000) playChime();
+    setEndingId(cycle.id);
+  }, [cycle]);
   const waiting = candidates(state.tasks).length;
 
   // Chime when the running cycle's time is up; cancelled if it ends early.
@@ -92,11 +97,11 @@ export default function App() {
         task={doorway}
         canSkip={canSkip}
         onStart={() => {
-          unlockAudio();
+          playStartTick();
           if (doorway) setState((s) => startCycle(s, doorway.id));
         }}
         onJustStart={() => {
-          unlockAudio();
+          playStartTick();
           setState((s) => startCycle(s));
         }}
         onSkip={() => doorway && setSkipIds((ids) => skipNext(state.tasks, battery, ids, doorway.id))}

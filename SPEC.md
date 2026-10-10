@@ -15,7 +15,11 @@ Me. One user, one browser. No auth, no sync, no onboarding.
 4. **How was that?** — neutral prompt after the cycle: tick done / not done, optional one-line note.
 5. **Journal** — every cycle and note lands in one dated journal.
 
-Adding a task is always one tap away from any state, so an empty list never dead-ends.
+Adding a task is always one tap away from any state, so an empty list never dead-ends. Adding confirms it and shows how many are waiting.
+
+**All tasks** (header → Tasks): the queue, oldest first, with split steps nested. Rename, mark done, delete. It's for housekeeping — the main screen still shows one task.
+
+**Chime** when a cycle's time is up (in-app sound only, scheduled on the audio clock so it rings in a background tab).
 
 ## "This feels too big"
 Splits a task into 2–3 smaller first steps that replace it in the doorway.
@@ -28,7 +32,7 @@ Splits a task into 2–3 smaller first steps that replace it in the doorway.
 - "Not this one" cycles through without reordering anything.
 
 ## What v1 does NOT have
-XP, levels, streaks, Vault, skins/animation, categories, multiple pages, Supabase, auth, notifications.
+XP, levels, streaks, Vault, skins/animation, categories, multiple pages, Supabase, auth, push notifications.
 
 ## Carried-over decisions (from YouMS)
 Streaks pause, never break · JUST START bypasses any required input · "How was that?" not achievement framing · one unified journal with typed entries · Vault is a permission slip (later).

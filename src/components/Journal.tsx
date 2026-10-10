@@ -55,7 +55,7 @@ export function Journal({ state, onNote, onClose }: Props) {
               <article key={e.id} className="rounded-xl border border-stone-800 bg-stone-900/60 px-4 py-3">
                 <div className="flex justify-between gap-3 text-sm text-stone-500">
                   <span className="break-words">
-                    {e.type === 'cycle' ? `Cycle · ${task ? task.title : 'Just start'}` : 'Note'}
+                    {e.type === 'cycle' ? `Cycle · ${task ? task.title : cycle?.taskId ? 'deleted task' : 'Just start'}` : 'Note'}
                   </span>
                   <span className="shrink-0">{time(cycle?.endedAt ?? cycle?.startedAt)}</span>
                 </div>

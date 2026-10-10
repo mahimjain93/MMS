@@ -5,10 +5,20 @@ type Props = {
   canSkip: boolean;
   onStart: () => void;
   onSkip: () => void;
+  onSplit: () => void;
+  onJustStart: () => void;
   onAdd: () => void;
 };
 
-export function Doorway({ task, canSkip, onStart, onSkip, onAdd }: Props) {
+function JustStart({ onClick }: { onClick: () => void }) {
+  return (
+    <button onClick={onClick} className="py-2 text-base text-amber-200/80 transition hover:text-amber-200">
+      ⚡ Just start
+    </button>
+  );
+}
+
+export function Doorway({ task, canSkip, onStart, onSkip, onSplit, onJustStart, onAdd }: Props) {
   if (!task) {
     return (
       <div className="flex flex-col items-center gap-6 text-center">
@@ -19,13 +29,14 @@ export function Doorway({ task, canSkip, onStart, onSkip, onAdd }: Props) {
         >
           + Add task
         </button>
+        <JustStart onClick={onJustStart} />
       </div>
     );
   }
 
   return (
     <div className="flex w-full max-w-md flex-col items-center gap-8 text-center">
-      <p className="text-sm uppercase tracking-widest text-stone-500">Just this one</p>
+      <p className="text-sm uppercase tracking-widest text-stone-500">{task.parentId ? 'Just this step' : 'Just this one'}</p>
       <h1 className="text-3xl leading-snug font-semibold break-words sm:text-4xl" data-testid="doorway-task">
         {task.title}
       </h1>
@@ -44,13 +55,10 @@ export function Doorway({ task, canSkip, onStart, onSkip, onAdd }: Props) {
             Not this one
           </button>
         )}
-        <button
-          disabled
-          className="rounded-2xl py-3 text-base text-stone-600"
-          title="Coming soon"
-        >
-          This feels too big · coming soon
+        <button onClick={onSplit} className="rounded-2xl py-3 text-base text-stone-400 transition hover:text-stone-200">
+          This feels too big
         </button>
+        <JustStart onClick={onJustStart} />
       </div>
     </div>
   );

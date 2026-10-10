@@ -93,6 +93,7 @@ export default function App() {
         <footer className="flex justify-center pb-4">
           <AddTask
             open={adding}
+            waiting={candidates(state.tasks).length}
             onOpen={() => setAdding(true)}
             onClose={() => setAdding(false)}
             onAdd={(title) => setState((s) => addTask(s, title))}

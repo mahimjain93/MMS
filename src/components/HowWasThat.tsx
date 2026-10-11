@@ -8,7 +8,7 @@ export function HowWasThat({ title, onSave }: Props) {
 
   return (
     <form
-      className="flex w-full max-w-md flex-col items-center gap-6 text-center"
+      className="flex w-full max-w-lg flex-col items-center gap-6 text-center"
       onSubmit={(e) => {
         e.preventDefault();
         onSave({ done: done === true, note });

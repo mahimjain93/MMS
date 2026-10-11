@@ -102,7 +102,7 @@ export function TaskList({ tasks, onClose, ...actions }: Props) {
   const doneToday = tasks.filter((t) => t.doneAt && todayStr(new Date(t.doneAt)) === today);
 
   return (
-    <div className="flex w-full max-w-md flex-col gap-5 self-start">
+    <div className="flex w-full max-w-3xl flex-col gap-5 self-start">
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-semibold">All tasks</h1>
         <button onClick={onClose} className="text-stone-400 underline underline-offset-4">

@@ -35,7 +35,7 @@ export function AddTask({ open, waiting, onOpen, onClose, onAdd }: Props) {
   };
 
   return (
-    <div className="flex w-full max-w-md flex-col gap-2">
+    <div className="flex w-full max-w-xl flex-col gap-2">
       <form
         className="flex gap-2"
         onSubmit={(e) => {

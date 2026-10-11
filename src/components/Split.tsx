@@ -8,7 +8,7 @@ export function Split({ title, onSplit, onCancel }: Props) {
 
   return (
     <form
-      className="flex w-full max-w-md flex-col gap-5"
+      className="flex w-full max-w-lg flex-col gap-5"
       onSubmit={(e) => {
         e.preventDefault();
         if (ready) onSplit(steps);

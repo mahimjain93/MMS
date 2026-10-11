@@ -14,17 +14,7 @@ import { Split } from './components/Split';
 import { Journal } from './components/Journal';
 import { TaskList } from './components/TaskList';
 import { useTheme } from './theme';
-
-function BatteryIcon({ level }: { level: 'full' | 'half' | 'low' }) {
-  const w = level === 'full' ? 12 : level === 'half' ? 7 : 3;
-  return (
-    <svg width="20" height="11" viewBox="0 0 20 11" aria-hidden="true" className="shrink-0">
-      <rect x="0.5" y="0.5" width="16" height="10" rx="2" fill="none" stroke="currentColor" />
-      <rect x="17.5" y="3.5" width="2" height="4" rx="0.5" fill="currentColor" />
-      <rect x="2.5" y="2.5" width={w} height="6" rx="1" fill="currentColor" />
-    </svg>
-  );
-}
+import { BatteryIcon } from './components/BatteryIcon';
 
 export default function App() {
   const [state, setState] = useAppState();
@@ -139,7 +129,7 @@ export default function App() {
   }
 
   return (
-    <div className="mx-auto flex min-h-full max-w-2xl flex-col px-4 py-6">
+    <div className="mx-auto flex min-h-full max-w-5xl flex-col px-4 py-6 md:px-8">
       <header className="flex h-8 items-center justify-between gap-3 text-sm text-stone-500">
         <span className="font-semibold tracking-wider text-stone-400">MMS</span>
         <div className="flex items-center gap-3 sm:gap-4">

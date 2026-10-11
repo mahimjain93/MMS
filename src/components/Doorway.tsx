@@ -35,9 +35,9 @@ export function Doorway({ task, canSkip, onStart, onSkip, onSplit, onJustStart, 
   }
 
   return (
-    <div className="flex w-full max-w-md flex-col items-center gap-8 text-center">
+    <div className="flex w-full max-w-xl flex-col items-center gap-8 text-center">
       <p className="text-sm uppercase tracking-widest text-stone-500">{task.parentId ? 'Just this step' : 'Just this one'}</p>
-      <h1 className="text-3xl leading-snug font-semibold break-words sm:text-4xl" data-testid="doorway-task">
+      <h1 className="text-3xl leading-snug font-semibold break-words sm:text-4xl md:text-5xl" data-testid="doorway-task">
         {task.title}
       </h1>
       <div className="flex w-full flex-col gap-3">

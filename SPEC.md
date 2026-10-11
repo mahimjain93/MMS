@@ -13,7 +13,7 @@ Me. One user, one browser. No auth, no sync, no onboarding.
 2. **Doorway** — the app shows **one** task, not a list. Buttons: `Start`, `Not this one` (shows next), `This feels too big`.
 3. **Work cycle** — 25-min timer on the chosen task. `⚡ JUST START` starts a cycle with no task picked.
 4. **How was that?** — neutral prompt after the cycle: tick done / not done, optional one-line note.
-5. **Journal** — every cycle and note lands in one dated journal.
+5. **Journal** — every cycle and note lands in one dated journal. It also holds the **check-in history**: each day's battery, mood and number of cycles (beside the entries on a laptop, above them on a phone).
 
 Adding a task is always one tap away from any state, so an empty list never dead-ends. Adding confirms it and shows how many are waiting.
 

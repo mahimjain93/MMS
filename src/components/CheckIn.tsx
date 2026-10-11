@@ -29,7 +29,7 @@ export function CheckIn({ current, onPick, onCancel }: Props) {
 
   return (
     <div className="flex w-full flex-col items-center gap-8">
-      <div className="flex w-full max-w-sm flex-col items-center gap-3">
+      <div className="flex w-full max-w-md flex-col items-center gap-3">
         <h2 className="text-base text-stone-400">Mood <span className="text-stone-600">· optional</span></h2>
         <div className="flex flex-wrap justify-center gap-2" role="group" aria-label="Mood">
           {MOODS.map((m) => (
@@ -50,7 +50,7 @@ export function CheckIn({ current, onPick, onCancel }: Props) {
         </div>
       </div>
 
-      <div className="flex w-full max-w-sm flex-col items-center gap-3">
+      <div className="flex w-full max-w-md flex-col items-center gap-3">
         <h1 className="text-xl text-stone-400">How's the battery?</h1>
         <div className="flex w-full flex-col gap-3">
           {BATTERY.map((o) => (

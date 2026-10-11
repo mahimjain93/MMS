@@ -2,7 +2,8 @@ import { describe, expect, it } from 'vitest';
 import { defaultState, type State } from '../storage';
 import { addTask } from './state';
 import { splitTask } from './cycles';
-import { deleteTask, markDone, openTaskTree, renameTask } from './tasks';
+import { addStep, deleteTask, markDone, openTaskTree, renameTask, undoDone } from './tasks';
+import { candidates } from './pickDoorway';
 
 const t0 = new Date('2026-10-11T04:00:00Z');
 function withTasks(...titles: string[]): State {
@@ -41,5 +42,43 @@ describe('task list', () => {
     const tree = openTaskTree(s.tasks);
     expect(tree.map((n) => n.task.title)).toEqual(['Big', 'Other']);
     expect(tree[0].steps.map((n) => n.task.title)).toEqual(['b']);
+  });
+
+  it('adds steps under a task, in order, and the steps replace it in the queue', () => {
+    let s = withTasks('Leads', 'Other');
+    const leads = s.tasks[0].id;
+    s = addStep(s, leads, 'scrape GMB');
+    s = addStep(s, leads, '  assign  ');
+    s = addStep(s, leads, '   ');
+    expect(openTaskTree(s.tasks)[0].steps.map((n) => n.task.title)).toEqual(['scrape GMB', 'assign']);
+    expect(candidates(s.tasks).map((t) => t.title)).toEqual(['Other', 'scrape GMB', 'assign']);
+  });
+
+  it('undo reopens a task', () => {
+    let s = withTasks('A');
+    s = undoDone(markDone(s, s.tasks[0].id, t0), s.tasks[0].id);
+    expect(s.tasks[0]).not.toHaveProperty('doneAt');
+  });
+
+  it('undoing the last step reopens the task it had finished', () => {
+    let s = withTasks('Leads');
+    const leads = s.tasks[0].id;
+    s = addStep(s, leads, 'only step');
+    const step = s.tasks[1].id;
+    s = markDone(s, step, t0);
+    expect(s.tasks.every((t) => t.doneAt)).toBe(true);
+    s = undoDone(s, step);
+    expect(s.tasks.some((t) => t.doneAt)).toBe(false);
+    expect(openTaskTree(s.tasks)[0].steps.map((n) => n.task.title)).toEqual(['only step']);
+  });
+
+  it('undoing a parent leaves its finished steps finished', () => {
+    let s = withTasks('Leads');
+    const leads = s.tasks[0].id;
+    s = addStep(s, leads, 'step');
+    s = markDone(s, s.tasks[1].id, t0);
+    s = undoDone(s, leads);
+    expect(s.tasks.find((t) => t.id === leads)).not.toHaveProperty('doneAt');
+    expect(s.tasks[1].doneAt).toBeDefined();
   });
 });

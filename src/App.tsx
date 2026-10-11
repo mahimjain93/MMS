@@ -4,7 +4,7 @@ import { addTask, checkIn, dayFor } from './logic/state';
 import { candidates } from './logic/pickDoorway';
 import { canSwap, dealCards, finishCard, focusOn, setAside, swapCard, touch, touchingNow } from './logic/warmup';
 import { activeCycle, addNote, CYCLE_MS, finishCycle, remainingMs, splitTask, startCycle } from './logic/cycles';
-import { deleteTask, markDone, renameTask } from './logic/tasks';
+import { addStep, deleteTask, markDone, renameTask, undoDone } from './logic/tasks';
 import { playChime, playStartTick, playYay, scheduleChime, unlockAudio } from './sound';
 import { CheckIn } from './components/CheckIn';
 import { Warmup } from './components/Warmup';
@@ -71,6 +71,8 @@ export default function App() {
       <TaskList
         tasks={state.tasks}
         onRename={(id, title) => setState((s) => renameTask(s, id, title))}
+        onAddStep={(id, title) => setState((s) => addStep(s, id, title))}
+        onUndo={(id) => setState((s) => undoDone(s, id))}
         onDone={(id) => {
           setState((s) => markDone(s, id));
           celebrate();

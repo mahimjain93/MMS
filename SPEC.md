@@ -17,7 +17,7 @@ Me. One user, one browser. No auth, no sync, no onboarding.
 
 Adding a task is always one tap away from any state, so an empty list never dead-ends. Adding confirms it and shows how many are waiting.
 
-**All tasks** (header → Tasks): the queue, oldest first, with split steps nested. Rename, mark done, delete. It's for housekeeping — the main screen still shows one task.
+**All tasks** (header → Tasks): the queue, oldest first, with steps nested. Rename, add a step (+), mark done, delete. **Done today** lists what's finished, each with Undo (undoing a step also reopens the task it had finished). It's for housekeeping — the main screen still shows one task.
 
 **Yay**: every Done (card, How was that?, All tasks) plays a short rising sound and a confetti burst with a "Done ✓" pill (no confetti if the device asks for reduced motion). "Not yet" gets nothing — it isn't failing.
 

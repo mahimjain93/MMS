@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { todayStr, type State } from '../storage';
 import { BatteryIcon } from './BatteryIcon';
 import { moodLabel } from './CheckIn';
+import { routinesDoneOn } from '../logic/routines';
 
 type Props = { state: State; onNote: (text: string) => void; onClose: () => void };
 
@@ -51,6 +52,7 @@ export function Journal({ state, onNote, onClose }: Props) {
             <ul className="divide-y divide-stone-800 rounded-xl border border-stone-800 bg-stone-900/60">
               {shown.map((d) => {
                 const n = cyclesOn(d.date);
+                const routines = routinesDoneOn(state, d.date);
                 return (
                   <li key={d.date} className="grid grid-cols-[6.5rem_1fr_auto] items-center gap-3 px-4 py-3 text-sm">
                     <span className={d.date === today ? 'font-semibold' : 'text-stone-300'}>
@@ -66,6 +68,11 @@ export function Journal({ state, onNote, onClose }: Props) {
                     <span className="text-stone-500">
                       {n} {n === 1 ? 'cycle' : 'cycles'}
                     </span>
+                    {routines.length > 0 && (
+                      <span className="col-span-3 -mt-1 text-xs text-emerald-300">
+                        {routines.map((r) => `✓ ${r}`).join('   ')}
+                      </span>
+                    )}
                   </li>
                 );
               })}

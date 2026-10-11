@@ -8,22 +8,36 @@ export type JournalEntry = { id: string; date: string; type: 'cycle' | 'note' | 
 /** The cards you're touching before you focus. Belongs to the day it started. */
 export type Warmup = { startedAt: string; touching: string[] };
 export type Open = { at: string; actedAt?: string };
+/** Something you do daily (exercise, breathwork). Not a task: it resets every day and is never dealt as a card. */
+export type Routine = { id: string; title: string; createdAt: string; archivedAt?: string };
+export type RoutineLog = { routineId: string; date: string; at: string };
 
 export type State = {
-  schemaVersion: 4;
+  schemaVersion: 5;
   tasks: Task[];
   days: Day[];
   cycles: Cycle[];
   journal: JournalEntry[];
   opens: Open[];
   warmup?: Warmup;
+  routines: Routine[];
+  routineLog: RoutineLog[];
 };
 
 export const STORAGE_KEY = 'mms-state';
-export const CURRENT_VERSION = 4;
+export const CURRENT_VERSION = 5;
+
+/** The routines everyone starts with (fixed ids so a fresh state is always the same). */
+export function defaultRoutines(): Routine[] {
+  const createdAt = '2026-01-01T00:00:00.000Z';
+  return [
+    { id: 'r-exercise', title: 'Exercise', createdAt },
+    { id: 'r-breathwork', title: 'Breathwork', createdAt: '2026-01-01T00:00:00.001Z' },
+  ];
+}
 
 export function defaultState(): State {
-  return { schemaVersion: 4, tasks: [], days: [], cycles: [], journal: [], opens: [] };
+  return { schemaVersion: 5, tasks: [], days: [], cycles: [], journal: [], opens: [], routines: defaultRoutines(), routineLog: [] };
 }
 
 /** A day runs 4 AM to 4 AM: a session that spills past midnight still belongs to the day it started. */
@@ -60,20 +74,23 @@ export function migrate(raw: unknown): State {
   const r = raw as Record<string, unknown>;
 
   const v = r.schemaVersion;
-  if (v === 1 || v === 2 || v === 3 || v === 4) {
+  if (v === 1 || v === 2 || v === 3 || v === 4 || v === 5) {
     const w = r.warmup as Warmup | undefined;
     const state: State = {
-      schemaVersion: 4,
+      schemaVersion: 5,
       tasks: arr<Task>(r.tasks),
       days: arr<Day>(r.days),
       cycles: arr<Cycle>(r.cycles),
       journal: arr<JournalEntry>(r.journal),
       opens: arr<Open>(r.opens),
       ...(w && typeof w.startedAt === 'string' && Array.isArray(w.touching) ? { warmup: w } : {}),
+      routines: v === 5 ? arr<Routine>(r.routines) : defaultRoutines(),
+      routineLog: arr<RoutineLog>(r.routineLog),
     };
     // v1 -> v2: days gained an optional mood. Nothing to convert.
     // v2 -> v3: days now start at 4 AM, so re-date what was recorded under midnight days.
     // v3 -> v4: optional warm-up cards and 'warmup' journal entries. Nothing to convert.
+    // v4 -> v5: routines (starting with Exercise and Breathwork) and their daily log.
     return v === 1 || v === 2 ? redateToFourAm(state) : state;
   }
 

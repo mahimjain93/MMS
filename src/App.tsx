@@ -5,10 +5,12 @@ import { candidates } from './logic/pickDoorway';
 import { canSwap, dealCards, finishCard, focusOn, setAside, swapCard, touch, touchingNow } from './logic/warmup';
 import { activeCycle, addNote, CYCLE_MS, finishCycle, remainingMs, splitTask, startCycle } from './logic/cycles';
 import { addStep, deleteTask, markDone, renameTask, undoDone } from './logic/tasks';
+import { activeRoutines, addRoutine, doneOn, removeRoutine, toggleRoutine } from './logic/routines';
 import { playChime, playStartTick, playYay, scheduleChime, unlockAudio } from './sound';
 import { CheckIn } from './components/CheckIn';
 import { Warmup } from './components/Warmup';
 import { Celebration } from './components/Celebration';
+import { Routines } from './components/Routines';
 import { AddTask } from './components/AddTask';
 import { Timer } from './components/Timer';
 import { HowWasThat } from './components/HowWasThat';
@@ -122,32 +124,45 @@ export default function App() {
       />
     );
   } else {
+    const routinesDone = doneOn(state);
     main = (
-      <Warmup
-        cards={cards}
-        touching={touching}
-        since={touching.length ? state.warmup?.startedAt : undefined}
-        parentTitle={(t) => (t.parentId ? state.tasks.find((x) => x.id === t.parentId)?.title : undefined)}
-        canSwap={canSwap(state.tasks, cards.length)}
-        onTouch={(id) => setState((s) => touch(s, id))}
-        onSetAside={(id) => setState((s) => setAside(s, id))}
-        onFocus={(id) => {
-          playStartTick();
-          setState((s) => focusOn(s, id));
-          setSkipIds([]);
-        }}
-        onDone={(id) => {
-          setState((s) => finishCard(s, id));
-          celebrate();
-        }}
-        onSwap={(id) => setSkipIds((ids) => swapCard(state.tasks, battery, touching, ids, id))}
-        onSplit={(id) => setSplittingId(id)}
-        onJustStart={() => {
-          playStartTick();
-          setState((s) => startCycle(s));
-        }}
-        onAdd={() => setAdding(true)}
-      />
+      <div className="flex w-full flex-col items-center gap-10">
+        <Routines
+          routines={activeRoutines(state)}
+          done={routinesDone}
+          onToggle={(id) => {
+            if (!routinesDone.has(id)) celebrate();
+            setState((s) => toggleRoutine(s, id));
+          }}
+          onAdd={(title) => setState((s) => addRoutine(s, title))}
+          onRemove={(id) => setState((s) => removeRoutine(s, id))}
+        />
+        <Warmup
+          cards={cards}
+          touching={touching}
+          since={touching.length ? state.warmup?.startedAt : undefined}
+          parentTitle={(t) => (t.parentId ? state.tasks.find((x) => x.id === t.parentId)?.title : undefined)}
+          canSwap={canSwap(state.tasks, cards.length)}
+          onTouch={(id) => setState((s) => touch(s, id))}
+          onSetAside={(id) => setState((s) => setAside(s, id))}
+          onFocus={(id) => {
+            playStartTick();
+            setState((s) => focusOn(s, id));
+            setSkipIds([]);
+          }}
+          onDone={(id) => {
+            setState((s) => finishCard(s, id));
+            celebrate();
+          }}
+          onSwap={(id) => setSkipIds((ids) => swapCard(state.tasks, battery, touching, ids, id))}
+          onSplit={(id) => setSplittingId(id)}
+          onJustStart={() => {
+            playStartTick();
+            setState((s) => startCycle(s));
+          }}
+          onAdd={() => setAdding(true)}
+        />
+      </div>
     );
   }
 

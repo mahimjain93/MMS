@@ -19,6 +19,8 @@ Adding a task is always one tap away from any state, so an empty list never dead
 
 **All tasks** (header → Tasks): the queue, oldest first, with steps nested. Rename, add a step (+), mark done, delete. **Done today** lists what's finished, each with Undo (undoing a step also reopens the task it had finished). It's for housekeeping — the main screen still shows one task.
 
+**Routines** (Exercise, Breathwork to start; add/remove via Edit): a small strip above the cards. Not tasks — they reset daily, are never dealt as cards, and are **not tied to battery**. Tap to log (often after the fact), tap again to undo. The Journal's check-in history shows which were done each day.
+
 **Yay**: every Done (card, How was that?, All tasks) plays a short rising sound and a confetti burst with a "Done ✓" pill (no confetti if the device asks for reduced motion). "Not yet" gets nothing — it isn't failing.
 
 **Sound**: a soft tick on Focus / Just start; a chime when a cycle ends — on time (scheduled on the audio clock so it rings in a background tab) or early. In-app sound only.
@@ -34,7 +36,7 @@ Splits a task into 2–3 smaller first steps that replace it in the doorway.
 - A warm-up belongs to its day; tomorrow starts fresh. Focusing writes a journal line: what you warmed up on, what you chose.
 
 ## What v1 does NOT have
-XP, levels, streaks, Vault, skins/animation, categories, multiple pages, Supabase, auth, push notifications.
+XP, levels, streaks (incl. routine streaks), Vault, skins/animation, categories, multiple pages, Supabase, auth, push notifications.
 
 ## Carried-over decisions (from YouMS)
 Streaks pause, never break · JUST START bypasses any required input · "How was that?" not achievement framing · one unified journal with typed entries · Vault is a permission slip (later).
@@ -42,12 +44,14 @@ Streaks pause, never break · JUST START bypasses any required input · "How was
 ## Data model (localStorage, key `mms-state`)
 ```ts
 type State = {
-  schemaVersion: 4;
+  schemaVersion: 5;
   tasks:   { id: string; title: string; parentId?: string; createdAt: string; doneAt?: string }[];
   days:    { date: string; battery: 'full' | 'half' | 'low'; mood?: 'calm' | 'okay' | 'anxious' | 'flat' | 'restless'; at?: string }[];
   cycles:  { id: string; date: string; startedAt: string; endedAt?: string; taskId?: string }[];
   journal: { id: string; date: string; type: 'cycle' | 'note' | 'warmup'; text: string; cycleId?: string }[];
   warmup?: { startedAt: string; touching: string[] };   // cards you're on, today
+  routines:   { id: string; title: string; createdAt: string; archivedAt?: string }[];
+  routineLog: { routineId: string; date: string; at: string }[];   // one row per routine per day
   opens:   { at: string; actedAt?: string }[];   // the 2-week metric; returning to an open tab after 30+ min (or into a new day) counts as an open
 };
 ```

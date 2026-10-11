@@ -22,9 +22,10 @@ export function dayFor(state: State, date = todayStr()): Day | undefined {
 }
 
 /** Record (or change) today's battery and optional mood. */
-export function checkIn(state: State, battery: Battery, mood?: Mood, date = todayStr()): State {
+export function checkIn(state: State, battery: Battery, mood?: Mood, now = new Date()): State {
+  const date = todayStr(now);
   const days = state.days.filter((d) => d.date !== date);
-  const day: Day = mood ? { date, battery, mood } : { date, battery };
+  const day: Day = { date, battery, ...(mood ? { mood } : {}), at: now.toISOString() };
   return { ...state, days: [...days, day] };
 }
 

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { openTaskTree, type TaskNode } from '../logic/tasks';
-import type { Task } from '../storage';
+import { todayStr, type Task } from '../storage';
 
 type Props = {
   tasks: Task[];
@@ -98,7 +98,8 @@ function Row({ node, depth, ...actions }: { node: TaskNode; depth: number } & Om
 
 export function TaskList({ tasks, onClose, ...actions }: Props) {
   const tree = openTaskTree(tasks);
-  const doneToday = tasks.filter((t) => t.doneAt && new Date(t.doneAt).toDateString() === new Date().toDateString());
+  const today = todayStr();
+  const doneToday = tasks.filter((t) => t.doneAt && todayStr(new Date(t.doneAt)) === today);
 
   return (
     <div className="flex w-full max-w-md flex-col gap-5 self-start">

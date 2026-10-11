@@ -119,9 +119,13 @@ export function Journal({ state, onNote, onClose }: Props) {
                       <span className="break-words">
                         {e.type === 'cycle'
                           ? `Cycle · ${task ? task.title : cycle?.taskId ? 'deleted task' : 'Just start'}`
-                          : 'Note'}
+                          : e.type === 'warmup'
+                            ? 'Warm-up'
+                            : 'Note'}
                       </span>
-                      <span className="shrink-0">{time(cycle?.endedAt ?? cycle?.startedAt)}</span>
+                      <span className="shrink-0">
+                        {time(e.type === 'warmup' ? cycle?.startedAt : (cycle?.endedAt ?? cycle?.startedAt))}
+                      </span>
                     </div>
                     {e.text && <p className="mt-1 break-words">{e.text}</p>}
                   </article>

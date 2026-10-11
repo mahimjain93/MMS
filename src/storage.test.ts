@@ -18,7 +18,7 @@ describe('migrate / parse', () => {
 
   it('upgrades v1 data without losing anything', () => {
     const s = migrate({ schemaVersion: 1, days: [{ date: '2026-10-10', battery: 'low' }] });
-    expect(s.schemaVersion).toBe(3);
+    expect(s.schemaVersion).toBe(4);
     expect(s.days).toEqual([{ date: '2026-10-10', battery: 'low' }]);
   });
 
@@ -37,9 +37,18 @@ describe('migrate / parse', () => {
     expect(s.journal[0].date).toBe('2026-10-10');
   });
 
-  it('v3 data is left as it is', () => {
+  it('v3 data is not re-dated, and upgrades to v4', () => {
     const days = [{ date: '2026-10-11', battery: 'low', at: '2026-10-10T20:25:00.000Z' }];
-    expect(migrate({ schemaVersion: 3, days, opens: [{ at: '2026-10-10T19:55:00.000Z' }] }).days).toEqual(days);
+    const s = migrate({ schemaVersion: 3, days, opens: [{ at: '2026-10-10T19:55:00.000Z' }] });
+    expect(s.days).toEqual(days);
+    expect(s.schemaVersion).toBe(4);
+    expect(s.warmup).toBeUndefined();
+  });
+
+  it('keeps a valid warm-up and drops a broken one', () => {
+    const warmup = { startedAt: '2026-10-11T18:40:00.000Z', touching: ['a'] };
+    expect(migrate({ schemaVersion: 4, warmup }).warmup).toEqual(warmup);
+    expect(migrate({ schemaVersion: 4, warmup: { touching: 'x' } }).warmup).toBeUndefined();
   });
 
   it('keeps valid v1 data and repairs missing arrays', () => {

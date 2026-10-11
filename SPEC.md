@@ -10,8 +10,8 @@ Me. One user, one browser. No auth, no sync, no onboarding.
 
 ## The loop (the whole of v1)
 1. **Check in** — one tap: Battery `Full / Half / Low`, plus an optional mood (Calm · Okay · Anxious · Flat · Restless). Once per day — a day runs **4 AM to 4 AM**, so a session past midnight belongs to the day it started; tap the battery in the header to change either. Mood is recorded (shown in the journal), it does not change which task appears.
-2. **Doorway** — the app shows **one** task, not a list. Buttons: `Start`, `Not this one` (shows next), `This feels too big`.
-3. **Work cycle** — 25-min timer on the chosen task. `⚡ JUST START` starts a cycle with no task picked.
+2. **Warm up** — the app deals up to **3 cards** (small, same size; a step shows which task it's part of). `On it` = I'm touching this (no timer). A touched card offers `Focus · 25 min` and `✓ Done`. `Swap` sends a card to the back; `Too big` splits it. When one pulls you in, Focus locks in on it and the rest fold away. (Born from how I actually work: 2–3 things in parallel to get going, then one.)
+3. **Work cycle** — 25-min timer on the task you focused on. `⚡ JUST START` starts a cycle with no task picked.
 4. **How was that?** — neutral prompt after the cycle: tick done / not done, optional one-line note.
 5. **Journal** — every cycle and note lands in one dated journal. It also holds the **check-in history**: each day's battery, mood and number of cycles (beside the entries on a laptop, above them on a phone).
 
@@ -19,17 +19,19 @@ Adding a task is always one tap away from any state, so an empty list never dead
 
 **All tasks** (header → Tasks): the queue, oldest first, with split steps nested. Rename, mark done, delete. It's for housekeeping — the main screen still shows one task.
 
-**Sound**: a soft tick on Start; a chime when a cycle ends — on time (scheduled on the audio clock so it rings in a background tab) or early. In-app sound only.
+**Yay**: every Done (card, How was that?, All tasks) plays a short rising sound and a confetti burst with a "Done ✓" pill (no confetti if the device asks for reduced motion). "Not yet" gets nothing — it isn't failing.
+
+**Sound**: a soft tick on Focus / Just start; a chime when a cycle ends — on time (scheduled on the audio clock so it rings in a background tab) or early. In-app sound only.
 
 ## "This feels too big"
 Splits a task into 2–3 smaller first steps that replace it in the doorway.
 - v1 (Prompt 02): manual — I type the steps.
 - v1.1 (Prompt 03): Claude API suggests the steps; I edit or accept. Call goes through a Vercel serverless function so the API key never ships to the browser.
 
-## Doorway selection (keep it dumb)
-- Low battery → prefer the smallest step (a task that came from a split), else the oldest undone task.
-- Half / Full → oldest undone task.
-- "Not this one" cycles through without reordering anything.
+## Dealing cards (keep it dumb)
+- Cards you're touching stay put, first. Free slots fill in order: oldest undone task first; on Low battery, split-off steps first.
+- `Swap` moves a card to the back of the line — it returns when a slot frees up.
+- A warm-up belongs to its day; tomorrow starts fresh. Focusing writes a journal line: what you warmed up on, what you chose.
 
 ## What v1 does NOT have
 XP, levels, streaks, Vault, skins/animation, categories, multiple pages, Supabase, auth, push notifications.
@@ -40,11 +42,12 @@ Streaks pause, never break · JUST START bypasses any required input · "How was
 ## Data model (localStorage, key `mms-state`)
 ```ts
 type State = {
-  schemaVersion: 3;
+  schemaVersion: 4;
   tasks:   { id: string; title: string; parentId?: string; createdAt: string; doneAt?: string }[];
   days:    { date: string; battery: 'full' | 'half' | 'low'; mood?: 'calm' | 'okay' | 'anxious' | 'flat' | 'restless'; at?: string }[];
   cycles:  { id: string; date: string; startedAt: string; endedAt?: string; taskId?: string }[];
-  journal: { id: string; date: string; type: 'cycle' | 'note'; text: string; cycleId?: string }[];
+  journal: { id: string; date: string; type: 'cycle' | 'note' | 'warmup'; text: string; cycleId?: string }[];
+  warmup?: { startedAt: string; touching: string[] };   // cards you're on, today
   opens:   { at: string; actedAt?: string }[];   // the 2-week metric; returning to an open tab after 30+ min (or into a new day) counts as an open
 };
 ```

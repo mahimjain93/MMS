@@ -4,23 +4,26 @@ export type Task = { id: string; title: string; parentId?: string; createdAt: st
 export type Mood = 'calm' | 'okay' | 'anxious' | 'flat' | 'restless';
 export type Day = { date: string; battery: Battery; mood?: Mood; at?: string };
 export type Cycle = { id: string; date: string; startedAt: string; endedAt?: string; taskId?: string };
-export type JournalEntry = { id: string; date: string; type: 'cycle' | 'note'; text: string; cycleId?: string };
+export type JournalEntry = { id: string; date: string; type: 'cycle' | 'note' | 'warmup'; text: string; cycleId?: string };
+/** The cards you're touching before you focus. Belongs to the day it started. */
+export type Warmup = { startedAt: string; touching: string[] };
 export type Open = { at: string; actedAt?: string };
 
 export type State = {
-  schemaVersion: 3;
+  schemaVersion: 4;
   tasks: Task[];
   days: Day[];
   cycles: Cycle[];
   journal: JournalEntry[];
   opens: Open[];
+  warmup?: Warmup;
 };
 
 export const STORAGE_KEY = 'mms-state';
-export const CURRENT_VERSION = 3;
+export const CURRENT_VERSION = 4;
 
 export function defaultState(): State {
-  return { schemaVersion: 3, tasks: [], days: [], cycles: [], journal: [], opens: [] };
+  return { schemaVersion: 4, tasks: [], days: [], cycles: [], journal: [], opens: [] };
 }
 
 /** A day runs 4 AM to 4 AM: a session that spills past midnight still belongs to the day it started. */
@@ -56,18 +59,22 @@ export function migrate(raw: unknown): State {
   if (!raw || typeof raw !== 'object') return defaultState();
   const r = raw as Record<string, unknown>;
 
-  if (r.schemaVersion === 1 || r.schemaVersion === 2 || r.schemaVersion === 3) {
+  const v = r.schemaVersion;
+  if (v === 1 || v === 2 || v === 3 || v === 4) {
+    const w = r.warmup as Warmup | undefined;
     const state: State = {
-      schemaVersion: 3,
+      schemaVersion: 4,
       tasks: arr<Task>(r.tasks),
       days: arr<Day>(r.days),
       cycles: arr<Cycle>(r.cycles),
       journal: arr<JournalEntry>(r.journal),
       opens: arr<Open>(r.opens),
+      ...(w && typeof w.startedAt === 'string' && Array.isArray(w.touching) ? { warmup: w } : {}),
     };
     // v1 -> v2: days gained an optional mood. Nothing to convert.
     // v2 -> v3: days now start at 4 AM, so re-date what was recorded under midnight days.
-    return r.schemaVersion === 3 ? state : redateToFourAm(state);
+    // v3 -> v4: optional warm-up cards and 'warmup' journal entries. Nothing to convert.
+    return v === 1 || v === 2 ? redateToFourAm(state) : state;
   }
 
   // Unknown or missing version: start fresh rather than crash.

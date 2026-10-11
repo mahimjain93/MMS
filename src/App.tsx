@@ -1,12 +1,14 @@
 import { useCallback, useEffect, useState } from 'react';
 import { useAppState } from './useAppState';
 import { addTask, checkIn, dayFor } from './logic/state';
-import { candidates, pickDoorway, skipNext } from './logic/pickDoorway';
+import { candidates } from './logic/pickDoorway';
+import { canSwap, dealCards, finishCard, focusOn, setAside, swapCard, touch, touchingNow } from './logic/warmup';
 import { activeCycle, addNote, CYCLE_MS, finishCycle, remainingMs, splitTask, startCycle } from './logic/cycles';
 import { deleteTask, markDone, renameTask } from './logic/tasks';
-import { playChime, playStartTick, scheduleChime, unlockAudio } from './sound';
+import { playChime, playStartTick, playYay, scheduleChime, unlockAudio } from './sound';
 import { CheckIn } from './components/CheckIn';
-import { Doorway } from './components/Doorway';
+import { Warmup } from './components/Warmup';
+import { Celebration } from './components/Celebration';
 import { AddTask } from './components/AddTask';
 import { Timer } from './components/Timer';
 import { HowWasThat } from './components/HowWasThat';
@@ -26,15 +28,20 @@ export default function App() {
   const [editingCheckIn, setEditingCheckIn] = useState(false);
   // A running cycle is "ending" once its time is up or "End early" is pressed.
   const [endingId, setEndingId] = useState<string | null>(null);
+  const [yay, setYay] = useState(0);
+  const celebrate = () => {
+    playYay();
+    setYay(Date.now());
+  };
 
   const today = dayFor(state);
   const battery = today?.battery;
   const cycle = activeCycle(state);
   const cycleTask = cycle?.taskId ? state.tasks.find((t) => t.id === cycle.taskId) : undefined;
   const ending = !!cycle && (endingId === cycle.id || remainingMs(cycle) === 0);
-  const doorway = battery ? pickDoorway(state.tasks, battery, skipIds) : null;
+  const touching = touchingNow(state);
+  const cards = battery ? dealCards(state.tasks, battery, touching, skipIds) : [];
   const splitting = splittingId ? state.tasks.find((t) => t.id === splittingId) : undefined;
-  const canSkip = candidates(state.tasks).length > 1;
   const endCycle = useCallback(() => {
     if (!cycle) return;
     // Time up: the scheduled chime rings. Ended early: chime now instead.
@@ -64,7 +71,10 @@ export default function App() {
       <TaskList
         tasks={state.tasks}
         onRename={(id, title) => setState((s) => renameTask(s, id, title))}
-        onDone={(id) => setState((s) => markDone(s, id))}
+        onDone={(id) => {
+          setState((s) => markDone(s, id));
+          celebrate();
+        }}
         onDelete={(id) => setState((s) => deleteTask(s, id))}
         onClose={() => setPanel(null)}
       />
@@ -87,6 +97,7 @@ export default function App() {
         title={cycleTask?.title}
         onSave={(answer) => {
           setState((s) => finishCycle(s, answer));
+          if (answer.done && cycleTask) celebrate();
           setEndingId(null);
           setSkipIds([]);
         }}
@@ -110,19 +121,29 @@ export default function App() {
     );
   } else {
     main = (
-      <Doorway
-        task={doorway}
-        canSkip={canSkip}
-        onStart={() => {
+      <Warmup
+        cards={cards}
+        touching={touching}
+        since={touching.length ? state.warmup?.startedAt : undefined}
+        parentTitle={(t) => (t.parentId ? state.tasks.find((x) => x.id === t.parentId)?.title : undefined)}
+        canSwap={canSwap(state.tasks, cards.length)}
+        onTouch={(id) => setState((s) => touch(s, id))}
+        onSetAside={(id) => setState((s) => setAside(s, id))}
+        onFocus={(id) => {
           playStartTick();
-          if (doorway) setState((s) => startCycle(s, doorway.id));
+          setState((s) => focusOn(s, id));
+          setSkipIds([]);
         }}
+        onDone={(id) => {
+          setState((s) => finishCard(s, id));
+          celebrate();
+        }}
+        onSwap={(id) => setSkipIds((ids) => swapCard(state.tasks, battery, touching, ids, id))}
+        onSplit={(id) => setSplittingId(id)}
         onJustStart={() => {
           playStartTick();
           setState((s) => startCycle(s));
         }}
-        onSkip={() => doorway && setSkipIds((ids) => skipNext(state.tasks, battery, ids, doorway.id))}
-        onSplit={() => doorway && setSplittingId(doorway.id)}
         onAdd={() => setAdding(true)}
       />
     );
@@ -178,6 +199,7 @@ export default function App() {
         </div>
       </header>
       <main className="flex flex-1 items-center justify-center py-10">{main}</main>
+      {yay > 0 && <Celebration key={yay} onDone={() => setYay(0)} />}
       {panel !== 'journal' && !splitting && (
         <footer className="flex justify-center pb-4">
           <AddTask

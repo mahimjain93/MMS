@@ -76,3 +76,11 @@ body {
   -webkit-font-smoothing: antialiased;
   transition: background-color 0.2s, color 0.2s;
 }
+
+@keyframes pop {
+  0% { opacity: 0; transform: translate(-50%, 8px) scale(0.9); }
+  12% { opacity: 1; transform: translate(-50%, 0) scale(1.05); }
+  20% { transform: translate(-50%, 0) scale(1); }
+  80% { opacity: 1; }
+  100% { opacity: 0; transform: translate(-50%, -6px); }
+}

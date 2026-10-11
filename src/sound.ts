@@ -23,7 +23,7 @@ export function unlockAudio(): void {
   if (c && c.state !== 'running') c.resume().catch(() => {});
 }
 
-type Note = { f: number; t: number; len: number; vol: number };
+type Note = { f: number; t: number; len: number; vol: number; wave?: OscillatorType };
 
 /** Play notes starting at an audio-clock time. Returns a function that silences them. */
 function play(c: AudioContext, start: number, notes: Note[]): () => void {
@@ -31,7 +31,7 @@ function play(c: AudioContext, start: number, notes: Note[]): () => void {
   for (const n of notes) {
     const osc = c.createOscillator();
     const gain = c.createGain();
-    osc.type = 'sine';
+    osc.type = n.wave ?? 'sine';
     osc.frequency.value = n.f;
     const t = start + n.t;
     gain.gain.setValueAtTime(0, t);
@@ -75,6 +75,21 @@ export function scheduleChime(atMs: number): () => void {
 export function playChime(): void {
   const c = getCtx();
   if (c) play(c, c.currentTime + 0.05, CHIME);
+}
+
+// A quick rising arpeggio for "done".
+const YAY: Note[] = [
+  { f: 523.25, t: 0, len: 0.25, vol: 0.3, wave: 'triangle' },
+  { f: 659.25, t: 0.08, len: 0.25, vol: 0.3, wave: 'triangle' },
+  { f: 783.99, t: 0.16, len: 0.25, vol: 0.3, wave: 'triangle' },
+  { f: 1046.5, t: 0.24, len: 0.7, vol: 0.32, wave: 'triangle' },
+  { f: 1318.5, t: 0.24, len: 0.7, vol: 0.12 },
+];
+
+export function playYay(): void {
+  unlockAudio();
+  const c = getCtx();
+  if (c) play(c, c.currentTime + 0.03, YAY);
 }
 
 /** Call from the Start tap: confirms the start and switches sound on for this visit. */

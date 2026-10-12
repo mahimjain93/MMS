@@ -8,6 +8,8 @@ type Props = {
 };
 
 const LABEL = { in: 'Breathe in', hold: 'Hold', out: 'Breathe out' } as const;
+/** How to breathe each phase: in through the nose, a long slow exhale through pursed lips. */
+const HOW = { in: 'through your nose', hold: 'gently, no strain', out: 'slowly through your mouth' } as const;
 const fmt = (s: number) => `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`;
 
 /** Full-screen guided breathing: 3 minutes, a ring to follow, then a soft landing. */
@@ -86,11 +88,11 @@ export function Breathwork({ onFinish, onClose }: Props) {
         </div>
 
         {running && (
-          <div className="relative flex h-64 w-64 items-center justify-center" aria-live="polite">
+          <div className="relative flex h-72 w-72 items-center justify-center" aria-live="polite">
             <div
               className="absolute inset-0 rounded-full border-2 border-amber-300 bg-amber-300/10 ease-in-out"
               style={{
-                transform: `scale(${big ? 1 : 0.55})`,
+                transform: `scale(${big ? 1 : 0.68})`,
                 transitionProperty: 'transform',
                 transitionDuration: `${phase === 'in' ? BREATH.in : phase === 'out' ? BREATH.out : 0.3}s`,
               }}
@@ -98,6 +100,9 @@ export function Breathwork({ onFinish, onClose }: Props) {
             <div className="relative">
               <div className="text-2xl font-medium" data-testid="breath-phase">
                 {LABEL[phase]}
+              </div>
+              <div className="text-sm text-stone-400" data-testid="breath-how">
+                {HOW[phase]}
               </div>
               <div className="mt-1 text-stone-500 tabular-nums">{left}</div>
             </div>

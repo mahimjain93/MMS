@@ -7,10 +7,13 @@ type Props = {
   onToggle: (id: string) => void;
   onAdd: (title: string) => void;
   onRemove: (id: string) => void;
+  /** The routine that can be done right here (breathwork), and how to start it. */
+  startable?: string;
+  onStart?: () => void;
 };
 
 /** Daily routines: a small strip above the cards. Tap to log, tap again to undo. */
-export function Routines({ routines, done, onToggle, onAdd, onRemove }: Props) {
+export function Routines({ routines, done, onToggle, onAdd, onRemove, startable, onStart }: Props) {
   const [editing, setEditing] = useState(false);
   const [text, setText] = useState('');
 
@@ -35,20 +38,31 @@ export function Routines({ routines, done, onToggle, onAdd, onRemove }: Props) {
               </button>
             </span>
           ) : (
-            <button
-              key={r.id}
-              onClick={() => onToggle(r.id)}
-              aria-pressed={isDone}
-              aria-label={isDone ? `${r.title}: done today. Tap to undo.` : `Log ${r.title} for today`}
-              className={`rounded-full border px-4 py-1.5 transition active:scale-[0.97] ${
-                isDone
-                  ? 'border-emerald-300/60 bg-emerald-300/10 text-emerald-300'
-                  : 'border-stone-700 text-stone-300 hover:border-stone-500'
-              }`}
-            >
-              {isDone ? '✓ ' : ''}
-              {r.title}
-            </button>
+            <span key={r.id} className="flex items-center gap-1">
+              <button
+                onClick={() => onToggle(r.id)}
+                aria-pressed={isDone}
+                aria-label={isDone ? `${r.title}: done today. Tap to undo.` : `Log ${r.title} for today`}
+                className={`rounded-full border px-4 py-1.5 transition active:scale-[0.97] ${
+                  isDone
+                    ? 'border-emerald-300/60 bg-emerald-300/10 text-emerald-300'
+                    : 'border-stone-700 text-stone-300 hover:border-stone-500'
+                }`}
+              >
+                {isDone ? '✓ ' : ''}
+                {r.title}
+              </button>
+              {r.id === startable && onStart && (
+                <button
+                  onClick={onStart}
+                  aria-label={`Start ${r.title} now`}
+                  title="Start a 3-minute session"
+                  className="rounded-full px-2 py-1.5 text-sm text-amber-200 hover:bg-amber-300/10"
+                >
+                  ▶ 3 min
+                </button>
+              )}
+            </span>
           );
         })}
         <button

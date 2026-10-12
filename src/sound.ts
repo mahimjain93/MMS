@@ -92,6 +92,14 @@ export function playYay(): void {
   if (c) play(c, c.currentTime + 0.03, YAY);
 }
 
+/** A very soft cue at the start of each in- and out-breath, for eyes-closed breathing. */
+export function playBreathCue(phase: 'in' | 'out'): void {
+  const c = getCtx();
+  if (!c) return;
+  const f = phase === 'in' ? 392 : 293.66;
+  play(c, c.currentTime + 0.02, [{ f, t: 0, len: 1.2, vol: 0.08 }]);
+}
+
 /** Call from the Start tap: confirms the start and switches sound on for this visit. */
 export function playStartTick(): void {
   unlockAudio();

@@ -11,6 +11,8 @@ import { CheckIn } from './components/CheckIn';
 import { Warmup } from './components/Warmup';
 import { Celebration } from './components/Celebration';
 import { Routines } from './components/Routines';
+import { Breathwork } from './components/Breathwork';
+import { breathworkRoutineId, finishBreathwork } from './logic/breath';
 import { AddTask } from './components/AddTask';
 import { Timer } from './components/Timer';
 import { HowWasThat } from './components/HowWasThat';
@@ -31,6 +33,7 @@ export default function App() {
   // A running cycle is "ending" once its time is up or "End early" is pressed.
   const [endingId, setEndingId] = useState<string | null>(null);
   const [yay, setYay] = useState(0);
+  const [breathing, setBreathing] = useState(false);
   const celebrate = () => {
     playYay();
     setYay(Date.now());
@@ -136,6 +139,8 @@ export default function App() {
           }}
           onAdd={(title) => setState((s) => addRoutine(s, title))}
           onRemove={(id) => setState((s) => removeRoutine(s, id))}
+          startable={breathworkRoutineId(state)}
+          onStart={() => setBreathing(true)}
         />
         <Warmup
           cards={cards}
@@ -170,7 +175,7 @@ export default function App() {
     <div className="mx-auto flex min-h-full max-w-5xl flex-col px-4 py-6 md:px-8">
       <header className="flex h-8 items-center justify-between gap-3 text-sm text-stone-500">
         <span className="font-semibold tracking-wider text-stone-400">MMS</span>
-        <div className="flex items-center gap-3 sm:gap-4">
+        <div className="flex items-center gap-2.5 whitespace-nowrap sm:gap-4">
           {today && (
             <button
               onClick={() => {
@@ -183,10 +188,13 @@ export default function App() {
               <BatteryIcon level={today.battery} />
               <span>
                 {today.battery}
-                {today.mood && <span className="text-stone-500"> · {today.mood}</span>}
+                {today.mood && <span className="hidden text-stone-500 sm:inline"> · {today.mood}</span>}
               </span>
             </button>
           )}
+          <button onClick={() => setBreathing(true)} className="text-amber-200/90 hover:text-amber-200">
+            Breathe
+          </button>
           <button
             onClick={() => {
               setEditingCheckIn(false);
@@ -217,6 +225,17 @@ export default function App() {
       </header>
       <main className="flex flex-1 items-center justify-center py-10">{main}</main>
       {yay > 0 && <Celebration key={yay} onDone={() => setYay(0)} />}
+      {breathing && (
+        <Breathwork
+          onClose={() => setBreathing(false)}
+          onFinish={(session) => {
+            const rid = breathworkRoutineId(state);
+            if (session.seconds >= 60 && rid && !doneOn(state).has(rid)) celebrate();
+            setState((s) => finishBreathwork(s, session));
+            setBreathing(false);
+          }}
+        />
+      )}
       {panel !== 'journal' && !splitting && (
         <footer className="flex justify-center pb-4">
           <AddTask

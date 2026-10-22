@@ -91,7 +91,7 @@ function Row({ node, depth, ...actions }: { node: TaskNode; depth: number } & Ro
         ) : (
           <button
             onClick={() => setEditing(true)}
-            className="min-w-0 flex-1 py-1 text-left break-words"
+            className="font-body min-w-0 flex-1 py-1 text-left break-words"
             title="Tap to rename"
           >
             {depth > 0 && <span className="mr-1 text-stone-500">↳</span>}

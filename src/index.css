@@ -1,80 +1,226 @@
 @import "tailwindcss";
 
 /*
- * Themes. The screens are written with dark-mode colours (stone, amber, ...).
- * Light mode flips each scale end-for-end (stone-900 <-> stone-100, amber-300
- * <-> amber-700 ...), so every screen gets a matching light version without
- * per-component changes. Values are set here so both themes are exact.
+ * Two looks, picked by the theme switch:
+ *   dark  = NEON ARCADE — deep purple night, pink/cyan glow, grid floor, scanlines, Press Start 2P labels
+ *   light = COZY PIXEL — sky-to-meadow, parchment panels, wood borders, moss buttons, Pixelify Sans labels
+ *
+ * The screens are written once with Tailwind's stone/amber/emerald/red
+ * classes. Each theme repaints those scales here, so every screen follows
+ * without per-component colours:
+ *   stone-950 page-dark / text on primary   stone-900 card + input fill
+ *   stone-800 card borders                  stone-700 chip + input borders
+ *   stone-500/400/300 muted → body text     amber-300 primary   amber-200 accent text
+ *   emerald-300 "done"                      red-300/500 delete
+ * Task titles and notes stay in a readable font (--font-body); labels,
+ * buttons, headings and timers use the arcade font (--font-display).
  */
 @theme {
-  --color-stone-50: #fafaf9;
-  --color-stone-100: #f5f5f4;
-  --color-stone-200: #e7e5e4;
-  --color-stone-300: #d6d3d1;
-  --color-stone-400: #a8a29e;
-  --color-stone-500: #78716c;
-  --color-stone-600: #57534e;
-  --color-stone-700: #44403c;
-  --color-stone-800: #292524;
-  --color-stone-900: #1c1917;
-  --color-stone-950: #0c0a09;
+  --color-stone-50: #ffffff;
+  --color-stone-100: #f6f3ff;
+  --color-stone-200: #ece6ff;
+  --color-stone-300: #d6cff5;
+  --color-stone-400: #b4aae6;
+  --color-stone-500: #9488c9;
+  --color-stone-600: #6a5ca3;
+  --color-stone-700: #4a3a86;
+  --color-stone-800: #2c1f5c;
+  --color-stone-900: #160c3a;
+  --color-stone-950: #07031a;
 
-  --color-amber-200: #fde68a;
-  --color-amber-300: #fcd34d;
+  --color-amber-200: #ff9be9;
+  --color-amber-300: #ff4fd8;
   --color-amber-700: #b45309;
   --color-amber-800: #92400e;
 
-  --color-emerald-300: #6ee7b7;
-  --color-emerald-700: #047857;
+  --color-emerald-300: #3ff0ff;
+  --color-emerald-700: #0e7490;
 
-  --color-red-300: #fca5a5;
-  --color-red-500: #ef4444;
+  --color-red-300: #ff7a9c;
+  --color-red-500: #ff3d6e;
   --color-red-700: #b91c1c;
+
+  --radius-sm: 0px;
+  --radius-md: 0px;
+  --radius-lg: 0px;
+  --radius-xl: 0px;
+  --radius-2xl: 0px;
 }
 
-:root {
-  --page-bg: #0f1115;
-  --page-fg: #e7e5e0;
+/* ---------- NEON ARCADE (dark) ---------- */
+:root,
+:root[data-theme="dark"] {
+  --page-bg: #0b0622;
+  --page-fg: #ece6ff;
+  --font-display: "Press Start 2P", ui-monospace, monospace;
+  --font-body: "Chakra Petch", ui-sans-serif, system-ui, sans-serif;
+  --display-adjust: 0.5;
+  --border-w: 2px;
+  --border-w-2: 3px;
+  --primary-shadow: 0 4px 0 #a2208a, 0 0 18px rgba(255, 79, 216, 0.55);
+  --lit-shadow: 0 0 22px rgba(255, 79, 216, 0.45), inset 0 0 22px rgba(255, 79, 216, 0.12);
+  --chip-shadow: none;
   color-scheme: dark;
 }
 
+/* ---------- COZY PIXEL (light) ---------- */
 :root[data-theme="light"] {
-  --page-bg: #faf8f4;
-  --page-fg: #1c1917;
+  --page-bg: #e8efd9;
+  --page-fg: #3d3029;
+  --font-display: "Pixelify Sans", ui-sans-serif, system-ui, sans-serif;
+  --font-body: "Nunito", ui-sans-serif, system-ui, sans-serif;
+  --display-adjust: none;
+  --border-w: 3px;
+  --border-w-2: 4px;
+  --primary-shadow: 0 4px 0 #3f4f37;
+  --lit-shadow: 4px 4px 0 #4f6346;
+  --chip-shadow: 0 3px 0 #8a6a55;
   color-scheme: light;
 
-  --color-stone-50: #0c0a09;
-  --color-stone-100: #1c1917;
-  --color-stone-200: #292524;
-  --color-stone-300: #44403c;
-  --color-stone-400: #57534e;
-  --color-stone-500: #78716c;
-  --color-stone-600: #a8a29e;
-  --color-stone-700: #d6d3d1;
-  --color-stone-800: #e7e5e4;
-  --color-stone-900: #f5f5f4;
-  --color-stone-950: #fafaf9;
+  --color-stone-50: #1f1712;
+  --color-stone-100: #2e231d;
+  --color-stone-200: #3d3029;
+  --color-stone-300: #4a3d33;
+  --color-stone-400: #5a4636;
+  --color-stone-500: #6b5444;
+  --color-stone-600: #a58b74;
+  --color-stone-700: #8a6a55;
+  --color-stone-800: #7a5c49;
+  --color-stone-900: #fff6e3;
+  --color-stone-950: #fffbf2;
 
-  --color-amber-200: #92400e;
-  --color-amber-300: #b45309;
+  --color-amber-200: #a8593d;
+  --color-amber-300: #5d7052;
 
-  --color-emerald-300: #047857;
+  --color-emerald-300: #3f6a3a;
+  --color-emerald-700: #4f6346;
 
-  --color-red-300: #b91c1c;
+  --color-red-300: #a33a2a;
+  --color-red-500: #c0392b;
 }
 
 html,
 body,
 #root {
+  min-height: 100%;
   height: 100%;
 }
 
 body {
-  background: var(--page-bg);
+  background-color: var(--page-bg);
   color: var(--page-fg);
-  font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  font-family: var(--font-body);
   -webkit-font-smoothing: antialiased;
-  transition: background-color 0.2s, color 0.2s;
+}
+
+#root {
+  position: relative;
+  z-index: 1;
+}
+
+/* ---------- Type ---------- */
+h1,
+button,
+.uppercase,
+.font-display,
+[data-testid="timer"] {
+  font-family: var(--font-display);
+  font-size-adjust: var(--display-adjust);
+}
+.font-body,
+.font-body button {
+  font-family: var(--font-body) !important;
+  font-size-adjust: none !important;
+}
+:root[data-theme="dark"] .uppercase {
+  letter-spacing: 0.06em;
+}
+
+/* ---------- Shapes: square, chunky ---------- */
+.rounded-full:not(.keep-round) {
+  border-radius: 0;
+}
+:root[data-theme] .border {
+  border-width: var(--border-w);
+}
+:root[data-theme] .border-2 {
+  border-width: var(--border-w-2);
+}
+
+/* Primary buttons press down like arcade / pixel buttons. */
+.bg-amber-300 {
+  box-shadow: var(--primary-shadow);
+}
+.bg-amber-300:active {
+  transform: translateY(3px);
+  box-shadow: none;
+}
+/* A picked-up card glows (neon) or casts a hard pixel shadow (cozy). */
+.border-amber-300.bg-amber-300\/5,
+.border-amber-300.bg-amber-300\/10 {
+  box-shadow: var(--lit-shadow);
+}
+
+/* ---------- NEON backdrop: night sky, grid floor, scanlines ---------- */
+:root[data-theme="dark"] body {
+  background-image: radial-gradient(ellipse at 50% -10%, #2a0f52 0%, #0d0724 55%, #07031a 100%);
+  background-attachment: fixed;
+}
+:root[data-theme="dark"] body::before {
+  content: "";
+  position: fixed;
+  left: -25%;
+  right: -25%;
+  bottom: -8%;
+  height: 40%;
+  background-image:
+    linear-gradient(rgba(255, 79, 216, 0.55) 2px, transparent 2px),
+    linear-gradient(90deg, rgba(255, 79, 216, 0.55) 2px, transparent 2px);
+  background-size: 48px 48px;
+  transform: perspective(420px) rotateX(62deg);
+  transform-origin: 50% 100%;
+  opacity: 0.32;
+  animation: grid-scroll 1.6s linear infinite;
+  pointer-events: none;
+  z-index: 0;
+}
+:root[data-theme="dark"] body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background: repeating-linear-gradient(0deg, rgba(255, 255, 255, 0.03) 0px, rgba(255, 255, 255, 0.03) 1px, transparent 1px, transparent 3px);
+  pointer-events: none;
+  z-index: 2;
+}
+@keyframes grid-scroll {
+  from { background-position: 0 0; }
+  to { background-position: 0 48px; }
+}
+
+/* ---------- COZY backdrop: sky to meadow, pixel ground ---------- */
+:root[data-theme="light"] body {
+  background-image: linear-gradient(180deg, #cfe3d4 0%, #e8efd9 45%, #f3ead7 100%);
+  background-attachment: fixed;
+}
+:root[data-theme="light"] body::before {
+  content: "";
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 24px;
+  background: repeating-linear-gradient(90deg, #8aa27b 0px, #8aa27b 16px, #7d966e 16px, #7d966e 32px);
+  box-shadow: 0 -8px 0 #9fb98e;
+  pointer-events: none;
+  z-index: 0;
+}
+:root[data-theme="light"] #root {
+  padding-bottom: 32px;
+  box-sizing: border-box;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  body::before { animation: none !important; }
 }
 
 @keyframes pop {

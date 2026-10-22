@@ -96,14 +96,14 @@ export function Warmup(p: Props) {
                   <div className="grid grid-cols-[1fr_auto] gap-2">
                     <button
                       onClick={() => p.onFocus(task.id)}
-                      className="rounded-xl bg-amber-300 py-3 font-semibold text-stone-950 transition active:scale-[0.98]"
+                      className="rounded-xl bg-amber-300 px-2 py-3 text-sm font-semibold whitespace-nowrap text-stone-950 transition active:scale-[0.98]"
                     >
                       Focus · 25 min
                     </button>
                     <button
                       onClick={() => p.onDone(task.id)}
                       aria-label={`Done: ${name}`}
-                      className="rounded-xl border border-stone-700 px-4 text-stone-300 transition hover:border-emerald-300 hover:text-emerald-300"
+                      className="rounded-xl border border-stone-700 px-3 text-sm whitespace-nowrap text-stone-300 transition hover:border-emerald-300 hover:text-emerald-300"
                     >
                       ✓ Done
                     </button>

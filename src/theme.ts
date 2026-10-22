@@ -6,7 +6,7 @@ const NEXT: Record<ThemePref, ThemePref> = { light: 'dark', dark: 'auto', auto: 
 function apply(pref: ThemePref) {
   const dark = pref === 'dark' || (pref === 'auto' && window.matchMedia('(prefers-color-scheme: dark)').matches);
   document.documentElement.dataset.theme = dark ? 'dark' : 'light';
-  document.querySelector('meta[name="theme-color"]')?.setAttribute('content', dark ? '#0f1115' : '#faf8f4');
+  document.querySelector('meta[name="theme-color"]')?.setAttribute('content', dark ? '#0b0622' : '#cfe3d4');
 }
 
 /** Current theme preference and a function that steps Light → Dark → Auto. */

@@ -90,7 +90,7 @@ export function Breathwork({ onFinish, onClose }: Props) {
         {running && (
           <div className="relative flex h-72 w-72 items-center justify-center" aria-live="polite">
             <div
-              className="absolute inset-0 rounded-full border-2 border-amber-300 bg-amber-300/10 ease-in-out"
+              className="keep-round absolute inset-0 rounded-full border-2 border-amber-300 bg-amber-300/10 ease-in-out"
               style={{
                 transform: `scale(${big ? 1 : 0.68})`,
                 transitionProperty: 'transform',

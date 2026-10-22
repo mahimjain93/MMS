@@ -173,8 +173,8 @@ export default function App() {
 
   return (
     <div className="mx-auto flex min-h-full max-w-5xl flex-col px-4 py-6 md:px-8">
-      <header className="flex h-8 items-center justify-between gap-3 text-sm text-stone-500">
-        <span className="font-semibold tracking-wider text-stone-400">MMS</span>
+      <header className="flex h-8 items-center justify-between gap-2 text-xs text-stone-500 sm:gap-3 sm:text-sm">
+        <span className="font-display text-xl text-amber-300">MMS</span>
         <div className="flex items-center gap-2.5 whitespace-nowrap sm:gap-4">
           {today && (
             <button

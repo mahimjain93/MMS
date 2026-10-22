@@ -34,7 +34,7 @@ export function Timer({ cycle, title, onEnd }: Props) {
   return (
     <div className="flex w-full max-w-xl flex-col items-center gap-8 text-center">
       <p className="text-sm uppercase tracking-widest text-stone-500">{title ? 'On it' : 'Just started'}</p>
-      {title && <h1 className="text-2xl leading-snug font-semibold break-words">{title}</h1>}
+      {title && <h1 className="font-body text-2xl leading-snug font-semibold break-words">{title}</h1>}
       <div className="text-7xl font-light tabular-nums tracking-tight" data-testid="timer">
         {fmt(left)}
       </div>

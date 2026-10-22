@@ -16,7 +16,7 @@ export function Split({ title, onSplit, onCancel }: Props) {
     >
       <div className="text-center">
         <p className="text-sm uppercase tracking-widest text-stone-500">Make it smaller</p>
-        <h1 className="mt-2 text-2xl font-semibold break-words">{title}</h1>
+        <h1 className="font-body mt-2 text-2xl font-semibold break-words">{title}</h1>
         <p className="mt-2 text-stone-400">What's the first tiny step? Add up to three.</p>
       </div>
       {steps.map((s, i) => (

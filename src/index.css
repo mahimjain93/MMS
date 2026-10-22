@@ -219,7 +219,14 @@ button,
   box-sizing: border-box;
 }
 
+/* Neon only: "Insert coin · Just start", blinking like an attract screen. */
+.coin { display: none; }
+:root[data-theme="dark"] .coin { display: inline; }
+@keyframes coin-blink { 0%, 55% { opacity: 1; } 56%, 100% { opacity: 0.4; } }
+:root[data-theme="dark"] button:has(> .coin) { animation: coin-blink 1.6s steps(1) infinite; }
+
 @media (prefers-reduced-motion: reduce) {
+  :root[data-theme="dark"] button:has(> .coin) { animation: none; }
   body::before { animation: none !important; }
 }
 

@@ -25,7 +25,7 @@ const GRID = ['', 'mx-auto max-w-md', 'md:grid-cols-2', 'md:grid-cols-3'];
 function JustStart({ onClick }: { onClick: () => void }) {
   return (
     <button onClick={onClick} className="py-2 text-base text-amber-200/80 transition hover:text-amber-200">
-      ⚡ Just start
+      <span className="coin">Insert coin · </span>Just start
     </button>
   );
 }
@@ -47,7 +47,7 @@ export function Warmup(p: Props) {
           onClick={p.onAdd}
           className="rounded-2xl bg-amber-300 px-8 py-5 text-xl font-semibold text-stone-950 transition active:scale-[0.98]"
         >
-          + Add task
+          + New mission
         </button>
         <JustStart onClick={p.onJustStart} />
       </div>
@@ -59,11 +59,11 @@ export function Warmup(p: Props) {
   return (
     <div className="flex w-full max-w-4xl flex-col items-center gap-6">
       <div className="text-center">
-        <p className="text-sm uppercase tracking-widest text-stone-500">
-          {warming ? `Warming up${p.since ? ` since ${time(p.since)}` : ''}` : 'Warm up'}
-        </p>
-        <p className="mt-1 text-stone-400">
-          {warming ? 'When one pulls you in, focus on it.' : 'Touch one, two or three. No timer yet.'}
+        <h1 className="text-xl text-stone-200">Missions</h1>
+        <p className="mt-2 text-stone-400">
+          {warming
+            ? `Warming up${p.since ? ` since ${time(p.since)}` : ''} · when one pulls you in, focus on it.`
+            : 'Pick up one, two or three. No timer yet.'}
         </p>
       </div>
 

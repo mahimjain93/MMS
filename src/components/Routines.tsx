@@ -18,9 +18,9 @@ export function Routines({ routines, done, onToggle, onAdd, onRemove, startable,
   const [text, setText] = useState('');
 
   return (
-    <section className="flex w-full max-w-4xl flex-col items-center gap-3" aria-label="Routines">
+    <section className="flex w-full max-w-4xl flex-col items-center gap-3" aria-label="Daily rituals">
       <div className="flex flex-wrap items-center justify-center gap-2">
-        <span className="mr-1 text-xs uppercase tracking-widest text-stone-500">Routines</span>
+        <span className="mr-1 text-xs uppercase tracking-widest text-stone-500">Daily rituals</span>
         {routines.map((r) => {
           const isDone = done.has(r.id);
           return editing ? (
@@ -31,7 +31,7 @@ export function Routines({ routines, done, onToggle, onAdd, onRemove, startable,
               {r.title}
               <button
                 onClick={() => onRemove(r.id)}
-                aria-label={`Remove routine ${r.title}`}
+                aria-label={`Remove ritual ${r.title}`}
                 className="rounded-full px-2 text-stone-500 hover:text-red-300"
               >
                 ✕
@@ -69,7 +69,7 @@ export function Routines({ routines, done, onToggle, onAdd, onRemove, startable,
           onClick={() => setEditing((v) => !v)}
           className="px-2 text-sm text-stone-500 underline-offset-4 hover:text-stone-300 hover:underline"
         >
-          {editing ? 'Done editing' : routines.length ? 'Edit' : '+ Add a routine'}
+          {editing ? 'Done editing' : routines.length ? 'Edit' : '+ Add a ritual'}
         </button>
       </div>
       {editing && (
@@ -86,8 +86,8 @@ export function Routines({ routines, done, onToggle, onAdd, onRemove, startable,
             value={text}
             onChange={(e) => setText(e.target.value)}
             onKeyDown={(e) => e.key === 'Escape' && setEditing(false)}
-            placeholder="New routine, e.g. Swim"
-            aria-label="New routine"
+            placeholder="New ritual, e.g. Swim"
+            aria-label="New ritual"
             className="min-w-0 flex-1 rounded-xl border border-stone-700 bg-stone-900 px-3 py-2 outline-none focus:border-amber-300"
           />
           <button

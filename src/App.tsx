@@ -192,8 +192,8 @@ export default function App() {
               </span>
             </button>
           )}
-          <button onClick={() => setBreathing(true)} className="text-amber-200/90 hover:text-amber-200">
-            Breathe
+          <button onClick={() => setBreathing(true)} aria-label="Storm mode" className="text-amber-200/90 hover:text-amber-200">
+            Storm<span className="hidden sm:inline"> mode</span>
           </button>
           <button
             onClick={() => {

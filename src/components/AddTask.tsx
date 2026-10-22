@@ -21,7 +21,7 @@ export function AddTask({ open, waiting, onOpen, onClose, onAdd }: Props) {
         }}
         className="rounded-full border border-stone-700 px-5 py-3 text-stone-300 transition hover:border-stone-500"
       >
-        + Add task
+        + New mission
       </button>
     );
   }
